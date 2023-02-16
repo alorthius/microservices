@@ -50,7 +50,7 @@ async def process_GET():
 @app.post("/")
 async def process_POST(message: RawMessage):
     result = await task_POST(message)
-    return result
+    return result[0]
 
 
 if __name__ == "__main__":
