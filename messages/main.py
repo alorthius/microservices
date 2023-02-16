@@ -21,5 +21,5 @@ if __name__ == "__main__":
     uvicorn.run(app="messages.main:app",
                 host=cfg["host"],
                 port=cfg["ports"]["messages"],
-                reload=True,
-                log_level="info")
+                reload=cfg["reload"],
+                log_level=cfg["log_level"])

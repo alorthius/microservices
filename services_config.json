@@ -4,5 +4,8 @@
         "facade":   8000,
         "logging":  8001,
         "messages": 8002
-    }
+    },
+
+    "reload": true,
+    "log_level": "info"
 }

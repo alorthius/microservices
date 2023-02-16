@@ -3,7 +3,7 @@ import uvicorn
 import httpx
 import asyncio
 from fastapi import FastAPI
-from models.raw_message import RawMessage
+from models.message import RawMessage
 
 def get_url(host: str, port: str):
     return f"http://{host}:{port}"
@@ -24,9 +24,7 @@ async def send_GET_request(client, url) -> (str, int):
 
 
 async def send_POST_request(client, url, message: RawMessage) -> (str, int):
-    print(message, type(message))
     response = await client.post(url, json={"msg": message.msg})
-    # response = await client.post(url, data=json.dumps(f"{{'msg': '{message.msg}'}}"))
     return response.json(), response.status_code
 
 
@@ -50,15 +48,14 @@ async def process_GET():
 
 
 @app.post("/")
-async def process_POST(message: RawMessage) -> str:
+async def process_POST(message: RawMessage):
     result = await task_POST(message)
-    print(result)
-    return "suck"
+    return result
 
 
 if __name__ == "__main__":
     uvicorn.run(app="facade.main:app",
                 host=cfg["host"],
                 port=cfg["ports"]["facade"],
-                reload=True,
-                log_level="info")
+                reload=cfg["reload"],
+                log_level=cfg["log_level"])
