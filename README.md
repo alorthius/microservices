@@ -56,7 +56,7 @@ Send requests via `curl`:
    ![img_10.png](img/img_10.png)
 
    3. Send GET to the `facade`:
-   ![img_11.png](img/img_11.png)![img_7.png](img/img_7.png)
+   ![img_11.png](img/img_11.png)
    
    4. All services output:
    ![img_12.png](img/img_12.png)
