@@ -1,3 +1,5 @@
+# Lab 2: Hazelcast basics
+
 ### Task 1
 
 ![](https://i.imgur.com/yfLaMYa.png)
