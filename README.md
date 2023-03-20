@@ -1,7 +1,5 @@
 ### Task 1
 
-
-
 ![](https://i.imgur.com/yfLaMYa.png)
 
 - After shutting down first member:  
@@ -27,6 +25,6 @@
 
 - The readers have no conflicts and all the read threads (2) stop after reading poison pill -1, which is added as the very last queue dummy node item:
 
-- ![](https://i.imgur.com/dLujjiP.png)
+![](https://i.imgur.com/dLujjiP.png)
 
 - If only producer is writing the items to the queue without reading, the execution will be paused as we reach queue elements limit and don't pop the elements
