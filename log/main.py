@@ -15,6 +15,7 @@ async def get_messages() -> str:
 
 @app.post("/")
 async def add_message(message: Message) -> str:
+    print("Received message:", message.msg)
     db.put(message.uuid, message.msg)
     return message.msg
 
@@ -22,12 +23,21 @@ async def add_message(message: Message) -> str:
 if __name__ == "__main__":
     import json
     import uvicorn
+    import sys
 
     f = open("services_config.json", mode="r", encoding="UTF-8")
     cfg = json.load(f)
 
-    uvicorn.run(app="log.main:app",
+    port = int(sys.argv[1])
+    if port not in cfg["ports"]["logging"]:
+        print('\nInvalid port. Valid ports: ', cfg["ports"]["logging"])
+        exit(1)
+
+    try:
+        uvicorn.run(app="log.main:app",
                 host=cfg["host"],
-                port=cfg["ports"]["logging"],
+                port=port,
                 reload=cfg["reload"],
                 log_level=cfg["log_level"])
+    except Exception as e:
+        print(e)

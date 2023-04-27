@@ -1,5 +1,3 @@
-import logging
-
 from fastapi import  FastAPI
 
 app = FastAPI()
@@ -7,7 +5,6 @@ app = FastAPI()
 
 @app.get("/")
 async def get_messages() -> str:
-    logging.info("Messages processes GET request")
     return "Not implemented yet"
 
 
