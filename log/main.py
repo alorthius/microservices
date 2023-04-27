@@ -1,11 +1,12 @@
+import hazelcast
 from fastapi import  FastAPI
 from models.message import Message
 
 
 app = FastAPI()
 
-db = dict()
-
+hz = hazelcast.HazelcastClient()
+db = hz.get_map("my-distributed-map").blocking()
 
 @app.get("/")
 async def get_messages() -> str:
@@ -14,7 +15,7 @@ async def get_messages() -> str:
 
 @app.post("/")
 async def add_message(message: Message) -> str:
-    db[message.uuid] = message.msg
+    db.put(message.uuid, message.msg)
     return message.msg
 
 

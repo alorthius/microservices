@@ -12,7 +12,7 @@
 In the root project directory run each service:
 - `python -m facade.main`
 - `python -m log.main`
-- `python -m models.main`
+- `python -m messages.main`
 
 Send requests via `curl`:
 - e.g. send GET request to the Facade:  
