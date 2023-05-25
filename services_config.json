@@ -3,7 +3,7 @@
     "ports": {
         "facade":   8000,
         "logging":  [8001, 8002, 8003],
-        "messages": 8004
+        "messages": [8004, 8005]
     },
 
     "reload": true,

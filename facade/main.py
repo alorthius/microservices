@@ -1,6 +1,7 @@
 import json
 import random
 
+import hazelcast
 import uvicorn
 import httpx
 import asyncio
@@ -15,12 +16,14 @@ f = open("services_config.json", mode="r", encoding="UTF-8")
 cfg = json.load(f)
 
 logging_urls_list = cfg["ports"]["logging"]
-messages_url = get_url(cfg["host"], str(cfg["ports"]["messages"]))
+messages_urls_list = cfg["ports"]["messages"]
 
-def choose_logging_url() -> str:
-    return get_url(cfg["host"], random.choice(logging_urls_list))
+def choose_random_url(ports_list) -> str:
+    return get_url(cfg["host"], random.choice(ports_list))
 
 app = FastAPI()
+hz = hazelcast.HazelcastClient()
+queue = hz.get_queue("my-queue").blocking()
 
 
 async def send_GET_request(client, url) -> (str, int):
@@ -36,20 +39,22 @@ async def send_POST_request(client, url, message: RawMessage) -> (str, int):
 async def task_GET() -> str:
     async with httpx.AsyncClient() as client:
         while True:
-            logging_url = choose_logging_url()
+            logging_url = choose_random_url(logging_urls_list)
+            messages_url = choose_random_url(messages_urls_list)
             try:
                 res = await asyncio.gather(send_GET_request(client, logging_url),
                                            send_GET_request(client, messages_url))
                 return f"Response from logging:  `{res[0][0]}` with status {res[0][1]}\nResponse from messages: `{res[1][0]}` with status {res[1][1]}\n"
             except httpx.ConnectError:
-                print(f"{logging_url} not available. Retrying...")
+                print(f"Either {logging_url} or {messages_url} is not available. Retrying...")
 
 
 async def task_POST(message: RawMessage):
     async with httpx.AsyncClient() as client:
         while True:
-            logging_url = choose_logging_url()
+            logging_url = choose_random_url(logging_urls_list)
             try:
+                queue.put(message)
                 return await send_POST_request(client, logging_url, message)
             except httpx.ConnectError:
                 print(f"{logging_url} not available. Retrying...")

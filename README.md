@@ -11,8 +11,8 @@
 
 In the root project directory run each service:
 - `python -m facade.main`
-- `python -m log.main <port>`, where `port` is one of preconfigured.
-- `python -m messages.main`
+- `python -m log.main <port>`, where `<port>` is one of preconfigured.
+- `python -m messages.main <port>`, where `<port>` is one of preconfigured.
 
 Send requests via `curl`:
 - e.g. send GET request to the Facade:  
@@ -26,26 +26,26 @@ Send requests via `curl`:
 
 1. Send 10 POST requests to Facade:  
 
-- Send using simple [bash script](post_10.bash)  
-![](https://i.imgur.com/lhwlNZX.png)  
+- Send using simple [bash script](post_10.bash)    
+![](https://i.imgur.com/3HtHQZo.png)
+
 
 - Facade output:  
-![](https://i.imgur.com/ucq8TPR.png)  
+![](https://i.imgur.com/M06fGnJ.png)
 
-- Each Logging's outputs:  
-![](https://i.imgur.com/1xUwDNz.png)  
-![](https://i.imgur.com/whiEAjf.png)  
-![](https://i.imgur.com/57Ru6bI.png)  
 
-2. Send GET to Facade:  
-![](https://i.imgur.com/4l7eViN.png)  
+- Each Logging's outputs:
+![](https://i.imgur.com/fugFCcN.png)
+![](https://i.imgur.com/s5E3X9Z.png)
+![](https://i.imgur.com/gZx5S84.png)
 
-3. Kill two Logging services (on ports 8002 and 8003) and send GET to Facade:  
-![](https://i.imgur.com/OrW78m2.png)  
 
-Facade output:  
-![](https://i.imgur.com/BHc82nC.png)    
+- Each Message's outputs:
+![](https://i.imgur.com/trGXdQ0.png)
+![](https://i.imgur.com/nFhj6Mj.png)
 
-4. Sent again 10 POST requests to Facade:  
-Facade output:  
-![](https://i.imgur.com/thYr0RZ.png)
+
+2. Send GET to Facade `5` times:  
+![](https://i.imgur.com/6JWDfDJ.png)
+
+As we can see, the output is different, as the Message's instances have separate values and on GET we select a random instance.
