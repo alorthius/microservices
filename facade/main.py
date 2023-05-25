@@ -6,6 +6,8 @@ import uvicorn
 import httpx
 import asyncio
 from fastapi import FastAPI
+from consul import Consul
+
 from models.message import RawMessage
 
 
@@ -15,16 +17,20 @@ def get_url(host: str, port: str) -> str:
 f = open("services_config.json", mode="r", encoding="UTF-8")
 cfg = json.load(f)
 
-logging_urls_list = cfg["ports"]["logging"]
-messages_urls_list = cfg["ports"]["messages"]
+# logging_urls_list = cfg["ports"]["logging"]
+# messages_urls_list = cfg["ports"]["messages"]
 
-def choose_random_url(ports_list) -> str:
-    return get_url(cfg["host"], random.choice(ports_list))
+def choose_random_url(array) -> str:
+    return random.choice(array)
 
+consul = Consul()
 app = FastAPI()
 hz = hazelcast.HazelcastClient()
-queue = hz.get_queue("my-queue").blocking()
+queue = hz.get_queue(consul.kv.get('queue-name')[1]['Value'].decode('utf-8')).blocking()
+# queue = hz.get_queue("my-queue").blocking()
 
+logging_urls_list = [get_url(node['Address'], node['ServicePort']) for node in consul.catalog.service('Logging')[1]]
+messages_urls_list = [get_url(node['Address'], node['ServicePort']) for node in consul.catalog.service('Messages')[1]]
 
 async def send_GET_request(client, url) -> (str, int):
     response = await client.get(url)
@@ -73,6 +79,8 @@ async def process_POST(message: RawMessage):
 
 
 if __name__ == "__main__":
+    consul.agent.service.register("Facade", "Facade" + str(cfg["ports"]["facade"]), cfg["host"], cfg["ports"]["facade"])
+
     uvicorn.run(app="facade.main:app",
                 host=cfg["host"],
                 port=cfg["ports"]["facade"],

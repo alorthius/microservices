@@ -1,12 +1,15 @@
 import hazelcast
+from consul import Consul
 from fastapi import  FastAPI
 from models.message import Message
 
 
+consul = Consul()
 app = FastAPI()
 
 hz = hazelcast.HazelcastClient()
-db = hz.get_map("my-distributed-map").blocking()
+db = hz.get_map(consul.kv.get('map-name')[1]['Value'].decode('utf-8')).blocking()
+# db = hz.get_map("my-distributed-map").blocking()
 
 @app.get("/")
 async def get_messages() -> str:
@@ -33,6 +36,7 @@ if __name__ == "__main__":
         print('\nInvalid port. Valid ports: ', cfg["ports"]["logging"])
         exit(1)
 
+    consul.agent.service.register("Logging", "Logging" + str(port), cfg["host"], port)
     try:
         uvicorn.run(app="log.main:app",
                 host=cfg["host"],

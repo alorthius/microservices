@@ -1,11 +1,14 @@
 import threading
+from consul import Consul
 import hazelcast
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 
+consul = Consul()
 hz = hazelcast.HazelcastClient()
-queue = hz.get_queue("my-queue").blocking()
+queue = hz.get_queue(consul.kv.get('queue-name')[1]['Value'].decode('utf-8')).blocking()
+# queue = hz.get_queue("my-queue").blocking()
 messages = []
 
 def listen_queue():
@@ -43,6 +46,8 @@ if __name__ == "__main__":
     if port not in cfg["ports"]["messages"]:
         print('\nInvalid port. Valid ports: ', cfg["ports"]["messages"])
         exit(1)
+
+    consul.agent.service.register("Messages", "Messages" + str(port), cfg["host"], port)
 
     uvicorn.run(app="messages.main:app",
                 host=cfg["host"],
