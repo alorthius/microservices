@@ -1,4 +1,4 @@
-# Lab 3: Microservices using Hazelcast Distributed Map
+# Lab 4: Microservices with MessageQueue
 
 
 ### Setup
